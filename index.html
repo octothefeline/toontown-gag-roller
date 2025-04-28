@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+
+<!-- TODO
+	* about page styling
+	* better cog/toon icons
+-->
+
+<head>
+	<meta charset="utf-8">
+	<title>Toontown Gag Roller</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" media="screen" href="main.css">
+	<link rel="icon" type="image/png" href="/assets/favicon.png" />
+	<script type="module" src="main.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+</head>
+
+<body>
+	<header id="title" class="title-container">
+		<h1 class="title-text">Toontown Gag Roller</h1>
+		<button id="about-button" class="title-button" data-tooltip="About" data-tooltip-position="bottom">
+			<svg class="title-button-icon">
+				<use href="assets/feather-sprite.svg#info" />
+			</svg>
+		</button>
+	</header>
+
+	<main id="main-content">
+		<section class="battle-panel-section">
+			<div class="target-row">
+				<button id="button-add-cog" class="target-button" data-tooltip="Add a Cog"
+					data-tooltip-position="right">
+					<svg class="target-button-icon">
+						<use href="assets/feather-sprite.svg#plus" />
+					</svg>
+				</button>
+
+				<div id="cog-targets" class="target-container">
+					<div class="target cog-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/cog.png">
+							<span class="target-icon-label">4</span>
+						</div>
+					</div>
+					<div class="target cog-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/cog.png">
+							<span class="target-icon-label">3</span>
+						</div>
+					</div>
+					<div class="target cog-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/cog.png">
+							<span class="target-icon-label">2</span>
+						</div>
+					</div>
+					<div class="target cog-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/cog.png">
+							<span class="target-icon-label">1</span>
+						</div>
+					</div>
+				</div>
+
+				<button id="button-remove-cog" class="target-button" data-tooltip="Remove a Cog"
+					data-tooltip-position="left">
+					<svg class="target-button-icon">
+						<use href="assets/feather-sprite.svg#minus" />
+					</svg>
+				</button>
+			</div>
+
+			<div id="rolled-gag">
+				<div id="rolled-gag-bg" style="background: var(--track-drop);">
+					<div id="rolled-gag-icon"></div>
+				</div>
+				<span id="rolled-gag-label"></span>
+			</div>
+
+			<div class="target-row">
+				<button id="button-add-toon" class="target-button" data-tooltip="Add a Toon"
+					data-tooltip-position="right">
+					<svg class="target-button-icon">
+						<use href="assets/feather-sprite.svg#plus" />
+					</svg>
+				</button>
+
+				<div id="toon-targets" class="target-container">
+					<div class="target toon-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/toon.png">
+							<span class="target-icon-label">4</span>
+						</div>
+					</div>
+					<div class="target toon-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/toon.png">
+							<span class="target-icon-label">3</span>
+						</div>
+					</div>
+					<div class="target toon-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/toon.png">
+							<span class="target-icon-label">2</span>
+						</div>
+					</div>
+					<div class="target toon-target">
+						<img class="target-arrow" src="assets/target.png">
+						<div class="target-icon-container">
+							<img class="target-icon" src="assets/toon.png">
+							<span class="target-icon-label">1</span>
+						</div>
+					</div>
+				</div>
+
+				<button id="button-remove-toon" class="target-button" data-tooltip="Remove a Toon"
+					data-tooltip-position="left">
+					<svg class="target-button-icon">
+						<use href="assets/feather-sprite.svg#minus" />
+					</svg>
+				</button>
+			</div>
+		</section>
+
+		<section class="gag-panel-section">
+			<div class="roll-button-container-top">
+				<button class="roll-button roll-button-top">roll gag!</button>
+			</div>
+
+			<div class="gag-panel-overflow">
+				<div class="gag-panel-container">
+					<div class="gag-panel-bg">
+						<div style="--color: var(--track-toon-up);"></div>
+						<div style="--color: var(--track-trap);"></div>
+						<div style="--color: var(--track-lure);"></div>
+						<div style="--color: var(--track-throw);"></div>
+						<div style="--color: var(--track-squirt);"></div>
+						<div style="--color: var(--track-zap);"></div>
+						<div style="--color: var(--track-sound);"></div>
+						<div style="--color: var(--track-drop);"></div>
+					</div>
+
+					<div class="gag-panel" id="gag-panel" role="presentation">
+						<div class="gag-panel-row" data-track="toon-up" style="--color: var(--track-toon-up);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Toon-Up Track"
+								aria-checked="true" data-tooltip="Toggle Toon-Up Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">toon-up</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Feather"
+									aria-label="Toggle Feather">
+									<div class="btn-img" style="background-position: 0px 0px;"></div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Megaphone"
+									aria-label="Toggle Megaphone">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) 0px;">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Lipstick"
+									aria-label="Toggle Lipstick">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) 0px;">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Bamboo Cane"
+									aria-label="Toggle Bamboo Cane">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) 0px;">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Pixie Dust"
+									aria-label="Toggle Pixie Dust">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) 0px;">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Juggling Cubes"
+									aria-label="Toggle Juggling Cubes">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) 0px;">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Confetti Cannon"
+									aria-label="Toggle Confetti Cannon">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) 0px;">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="High Dive"
+									aria-label="Toggle High Dive">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) 0px;">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="trap" style="--color: var(--track-trap);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Trap Track"
+								aria-checked="true" data-tooltip="Toggle Trap Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">trap</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Banana Peel"
+									aria-label="Toggle Banana Peel">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Rake"
+									aria-label="Toggle Rake">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Springboard"
+									aria-label="Toggle Springboard">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Marbles"
+									aria-label="Toggle Marbles">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Quicksand"
+									aria-label="Toggle Quicksand">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Trapdoor"
+									aria-label="Toggle Trapdoor">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Wrecking Ball"
+									aria-label="Toggle Wrecking Ball">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="TNT"
+									aria-label="Toggle TNT">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -1);">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="lure" style="--color: var(--track-lure);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Lure Track"
+								aria-checked="true" data-tooltip="Toggle Lure Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">lure</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="$1 Bill"
+									aria-label="Toggle $1 Bill">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Small Magnet"
+									aria-label="Toggle Small Magnet">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="$5 Bill"
+									aria-label="Toggle $5 Bill">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Big Magnet"
+									aria-label="Toggle Big Magnet">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="$10 Bill"
+									aria-label="Toggle $10 Bill">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Hypno-goggles"
+									aria-label="Toggle Hypno-goggles">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="$50 Bill"
+									aria-label="Toggle $50 Bill">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="Presentation"
+									aria-label="Toggle Presentation">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -2);">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="throw" style="--color: var(--track-throw);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Throw Track"
+								aria-checked="true" data-tooltip="Toggle Throw Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">throw</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Cupcake"
+									aria-label="Toggle Cupcake">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Fruit Pie Slice"
+									aria-label="Toggle Fruit Pie Slice">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Cream Pie Slice"
+									aria-label="Toggle Cream Pie Slice">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4"
+									data-tooltip="Birthday Cake Slice" aria-label="Toggle Birthday Cake Slice">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Whole Fruit Pie"
+									aria-label="Toggle Whole Fruit Pie">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Whole Cream Pie"
+									aria-label="Toggle Whole Cream Pie">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Birthday Cake"
+									aria-label="Toggle Birthday Cake">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="Wedding Cake"
+									aria-label="Toggle Wedding Cake">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -3);">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="squirt" style="--color: var(--track-squirt);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Squirt Track"
+								aria-checked="true" data-tooltip="Toggle Squirt Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">squirt</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Squirting Flower"
+									aria-label="Toggle Squirting Flower">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Glass of Water"
+									aria-label="Toggle Glass of Water">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Squirt Gun"
+									aria-label="Toggle Squirt Gun">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Water Balloon"
+									aria-label="Toggle Water Balloon">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Seltzer Bottle"
+									aria-label="Toggle Seltzer Bottle">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Fire Hose"
+									aria-label="Toggle Fire Hose">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Storm Cloud"
+									aria-label="Toggle Storm Cloud">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="Geyser"
+									aria-label="Toggle Geyser">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -4);">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="zap" style="--color: var(--track-zap);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Zap Track"
+								aria-checked="true" data-tooltip="Toggle Zap Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">zap</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Joy Buzzer"
+									aria-label="Toggle Joy Buzzer">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Lightbulb"
+									aria-label="Toggle Lightbulb">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Broken Radio"
+									aria-label="Toggle Broken Radio">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Kart Battery"
+									aria-label="Toggle Kart Battery">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Broken TV"
+									aria-label="Toggle Broken TV">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Stage Light"
+									aria-label="Toggle Stage Light">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Tesla Coil"
+									aria-label="Toggle Tesla Coil">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="Lightning"
+									aria-label="Toggle Lightning">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -5);">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="sound" style="--color: var(--track-sound);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Sound Track"
+								aria-checked="true" data-tooltip="Toggle Sound Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">sound</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Kazoo"
+									aria-label="Toggle Kazoo">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Bike Horn"
+									aria-label="Toggle Bike Horn">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Whistle"
+									aria-label="Toggle Whistle">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Bugle"
+									aria-label="Toggle Bugle">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Aoogah"
+									aria-label="Toggle Aoogah">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Elephant Trunk"
+									aria-label="Toggle Elephant Trunk">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Foghorn"
+									aria-label="Toggle Foghorn">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="Opera Singer"
+									aria-label="Toggle Opera Singer">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -6);">
+									</div>
+								</button>
+							</div>
+						</div>
+						<div class="gag-panel-row" data-track="drop" style="--color: var(--track-drop);">
+							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Drop Track"
+								aria-checked="true" data-tooltip="Toggle Drop Track" data-tooltip-position="right">
+								<svg class="checkbox-icon" aria-hidden="true">
+									<use class="checkbox-icon-on" href="assets/feather-sprite.svg#check" />
+									<use class="checkbox-icon-off" href="assets/feather-sprite.svg#minus" />
+								</svg>
+							</button>
+							<span class="track-label">drop</span>
+							<div class="gag-button-container">
+								<button type="button" class="gag-button" data-level="1" data-tooltip="Flower Pot"
+									aria-label="Toggle Flower Pot">
+									<div class="btn-img"
+										style="background-position: 0px calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="2" data-tooltip="Sandbag"
+									aria-label="Toggle Sandbag">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -1) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="3" data-tooltip="Bowling Ball"
+									aria-label="Toggle Bowling Ball">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -2) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="4" data-tooltip="Anvil"
+									aria-label="Toggle Anvil">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -3) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="5" data-tooltip="Big Weight"
+									aria-label="Toggle Big Weight">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -4) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="6" data-tooltip="Safe"
+									aria-label="Toggle Safe">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -5) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="7" data-tooltip="Boulder"
+									aria-label="Toggle Boulder">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -6) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+								<button type="button" class="gag-button" data-level="8" data-tooltip="Grand Piano"
+									aria-label="Toggle Grand Piano">
+									<div class="btn-img"
+										style="background-position: calc(var(--gag-button-image-size) * -7) calc(var(--gag-button-image-size) * -7);">
+									</div>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<button class="roll-button roll-button-side">roll gag!</button>
+		</section>
+	</main>
+
+	<div id="about-modal" class="modal">
+		<div class="modal-content">
+			<div class="about-header">
+				<div style="margin: 12px; display: flex; flex-direction: column; gap: 4px;">
+					<span style="font-family: Minnie; font-size: clamp(18px, 4vw, 24px);">Toontown Gag Roller</span>
+					<div style="display: flex; justify-content: space-between;">
+						<span>by octothecat</span>
+						<span>v1.0</span>
+					</div>
+				</div>
+				<button id="about-modal-close-btn" data-tooltip="Close" data-tooltip-position="bottom"
+					style="cursor: pointer; padding: 0; border: none; background: none; width: 38px; height: 38px;">
+					<svg
+						style="width: 38px; height: 38px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: black; pointer-events: none;">
+						<use href="assets/feather-sprite.svg#x-circle" />
+					</svg>
+				</button>
+			</div>
+
+			<div class="about-content" style="margin: 6px; padding: 6px;">
+				<span>how to use (gag buttons, gag track checkboxes, add/remove toons/cogs)</span>
+				<p>options:</p>
+				<ul>
+					<li>
+						<input id="volume-slider" type="range" min="0" max="1.0" step="0.05" value="0.5">
+						<label for="volume-slider" style="-webkit-user-select: none; user-select: none;">volume</label>
+					</li>
+					<li>
+						<input type="checkbox" id="do-roll-animation" checked />
+						<label for="do-roll-animation" style="-webkit-user-select: none; user-select: none;">roll
+							animation</label>
+					</li>
+					<li>
+						<input type="checkbox" id="do-confetti" checked />
+						<label for="do-confetti" style="-webkit-user-select: none; user-select: none;">confetti</label>
+					</li>
+					<li>
+						<input type="checkbox" id="toggle-bg" />
+						<label for="toggle-bg" style="-webkit-user-select: none; user-select: none;">moving
+							background</label>
+					</li>
+				</ul>
+				<p>credits:</p>
+				<ul>
+					<li>corporate clash: gag icons, toon icon, sounds</li>
+					<li>cc wiki: cog icon (tbd)</li>
+					<li>fonts</li>
+					<li>feather icons</li>
+				</ul>
+				<p>This site is not affiliated with Disney or Toontown: Corporate Clash.</p>
+				<a href="" style="display: inline-flex; gap: 4px;">
+					View on GitHub
+					<svg aria-hidden="true"
+						style="width: 1.25em; height: 1.25em; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke: black;">
+						<use href="assets/feather-sprite.svg#github" />
+					</svg>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<noscript
+		style="position: fixed;top: 0;left: 0;bottom: 0;right: 0;background: rgba(0 0 0 / 40%);display: flex;align-items: center;justify-content: center;">
+		<div
+			style="border: 2px solid black;background: white;padding: 16px;border-radius: 6px;box-shadow: rgba(0 0 0 / 30%) 4px 4px 16px;text-align: center;font-size: 18px;">
+			<span>This site requires Javascript!</span>
+			<br><br>
+			<a href="">View source on GitHub</a>
+		</div>
+	</noscript>
+
+	<div
+		style="position: fixed; top: 0; left: 0; margin: 6px; font-size: 18px; color: rgb(240, 10, 10); text-shadow: 2px 2px 6px rgba(0 0 0 / 15%);">
+		preview version - subject to change
+	</div>
+</body>
+
+</html>
