@@ -301,7 +301,7 @@ main {
 #rolled-gag-icon {
 	width: var(--gag-size);
 	height: var(--gag-size);
-	background-image: url('/assets/gags.png');
+	background-image: url('assets/gags.png');
 	background-repeat: no-repeat;
 	filter: drop-shadow(2px 2px 2px rgba(0 0 0 / 40%));
 	background-size: calc(var(--gag-sheet-size) * var(--gag-size) / var(--gag-sprite-size));
