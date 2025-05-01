@@ -241,19 +241,20 @@ function startRoll() {
 function rollAnimation(frame = 0) {
 	clearTimeout(currentRollTimeout);
 
-	if (frame < numRolls - 1) {
-		// Continue animation
-		currentRollTimeout = setTimeout(() => { rollAnimation(frame + 1); }, rollSpeedMs);
+	let isLastRoll = frame >= numRolls - 1;
 
-	} else {
+	if (isLastRoll) {
 		// Roll animation complete
 		document.getElementById("button-add-cog").removeAttribute("disabled");
 		document.getElementById("button-remove-cog").removeAttribute("disabled");
 		document.getElementById("button-add-toon").removeAttribute("disabled");
 		document.getElementById("button-remove-toon").removeAttribute("disabled");
+	} else {
+		// Continue animation
+		currentRollTimeout = setTimeout(() => { rollAnimation(frame + 1); }, rollSpeedMs);
 	}
 
-	showRolledGag(currentRollSequence[frame], document.getElementById("do-confetti").checked);
+	showRolledGag(currentRollSequence[frame], document.getElementById("do-confetti").checked && isLastRoll);
 }
 
 function showRolledGag(roll, doConfetti = true) {
@@ -286,9 +287,9 @@ function showRolledGag(roll, doConfetti = true) {
 		confetti({
 			spread: 270,
 			gravity: 0,
-			decay: 0.94,
+			decay: 0.96,
 			startVelocity: 15,
-			particleCount: 7,
+			particleCount: 50,
 			scalar: 1.25,
 			origin: {
 				x: (gagIcon.x + gagIcon.width / 2) / window.innerWidth,
