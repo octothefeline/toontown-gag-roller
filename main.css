@@ -792,3 +792,46 @@ main {
 .checkbox[aria-checked="false"] .checkbox-icon-off {
 	display: block;
 }
+
+.input-label {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.toggle-switch input {
+	display: none;
+}
+
+.toggle-switch .switch-button {
+	position: relative;
+	width: 40px;
+	height: 24px;
+
+	background-color: dimgray;
+	border-radius: 999px;
+
+	cursor: pointer;
+	transition-duration: 100ms;
+}
+
+.toggle-switch .switch-button::before {
+	content: "";
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	top: 4px;
+	left: 4px;
+
+	background-color: white;
+	border-radius: 50%;
+
+	transition-duration: 100ms;
+}
+
+.toggle-switch input:checked+.switch-button::before {
+	transform: translateX(100%);
+}
+
+.toggle-switch input:checked+.switch-button {
+	background-color: deepskyblue;
+}
