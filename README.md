@@ -4,6 +4,8 @@ Toontown Gag Roller is a simple website that will randomly pick a Toontown gag f
 
 This site is build from scratch using plain HTML, CSS, and Javascript. You won't be finding any frontend libraries in this repo.
 
+I am by no means a web developer, nor a designer. This is just a for-fun project that I hope will be entertaining for people to play around with.
+
 ## Running Locally
 
 Clone this repository, and simply run an HTTP server (such as [http-server](https://github.com/http-party/http-server)) inside the project's root directory.
