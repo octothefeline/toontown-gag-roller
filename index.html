@@ -14,7 +14,7 @@
 <body>
 	<header id="title" class="title-container">
 		<h1 class="title-text">Toontown Gag Roller</h1>
-		<button id="about-button" class="title-button" data-tooltip="About" data-tooltip-position="bottom">
+		<button id="about-button-open" class="title-button" data-tooltip="About" data-tooltip-position="bottom">
 			<svg class="title-button-icon">
 				<use href="assets/feather-sprite.svg#info" />
 			</svg>
@@ -641,12 +641,9 @@
 						<span>v1.0</span>
 					</div>
 				</div>
-				<!-- TODO button style -->
-				<button id="about-modal-close-btn" data-tooltip="Close" data-tooltip-position="bottom"
-					style="cursor: pointer; padding: 0; border: none; background: none; width: 38px; height: 38px;">
-					<svg
-						style="width: 38px; height: 38px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: black; pointer-events: none;">
-						<use href="assets/feather-sprite.svg#x-circle" />
+				<button id="about-button-close" class="about-close" data-tooltip="Close" data-tooltip-position="bottom">
+					<svg class="about-close-icon">
+						<use href="assets/feather-sprite.svg#x" />
 					</svg>
 				</button>
 			</div>

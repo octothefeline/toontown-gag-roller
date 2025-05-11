@@ -680,6 +680,42 @@ main {
 	scrollbar-gutter: stable;
 }
 
+.about-close {
+	--button-color: white;
+	--accent-color: dimgray;
+
+	touch-action: manipulation;
+	cursor: pointer;
+	padding: 5px;
+	line-height: 0;
+	border: none;
+	border-radius: 30%;
+	background-color: var(--button-color);
+	width: fit-content;
+	height: fit-content;
+}
+
+.about-close:hover {
+	filter: brightness(90%);
+}
+
+.about-close:active {
+	filter: brightness(75%);
+}
+
+.about-close-icon {
+	width: 26px;
+	height: 26px;
+	stroke-width: 3;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke: var(--accent-color);
+	fill: none;
+	filter: drop-shadow(2px 2px 1px rgba(0 0 0 / 10%));
+
+	pointer-events: none;
+}
+
 .credits-link {
 	justify-self: right;
 }

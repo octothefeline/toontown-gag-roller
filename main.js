@@ -163,8 +163,8 @@ function DOMContentLoaded() {
 		target.ariaChecked = (target.ariaChecked === "true") ? "false" : "true";
 	}));
 
-	document.getElementById("about-button").addEventListener("click", openAboutModal);
-	document.getElementById("about-modal-close-btn").addEventListener("click", closeAboutModal);
+	document.getElementById("about-button-open").addEventListener("click", openAboutModal);
+	document.getElementById("about-button-close").addEventListener("click", closeAboutModal);
 
 	document.getElementById("about-modal").addEventListener("click", (event) => {
 		// Clicking outside modal content
@@ -344,7 +344,7 @@ function shuffle(list) {
 }
 
 function rollSequence(sequenceLength) {
-	const gagButtons = document.getElementById("gag-panel").querySelectorAll(".gag-button:not(.disabled)");
+	const gagButtons = document.getElementById("gag-panel").querySelectorAll(".gag-button:not(.disabled):not(.hidden)");
 
 	const cogs = document.getElementById("cog-targets").querySelectorAll(".target");
 	const toons = document.getElementById("toon-targets").querySelectorAll(".target");
