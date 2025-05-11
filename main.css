@@ -838,14 +838,21 @@ main {
 	user-select: none;
 }
 
-.toggle-switch input {
-	display: none;
+.toggle-switch {
+	--button-width: 40px;
+	--button-height: 24px;
+	--switch-size: 16px;
+	--switch-padding: calc(var(--button-height) / 2 - var(--switch-size) / 2);
+
+	line-height: 0;
 }
 
-.toggle-switch .switch-button {
+.toggle-switch input {
+	appearance: none;
 	position: relative;
-	width: 40px;
-	height: 24px;
+	width: var(--button-width);
+	height: var(--button-height);
+	margin: 0;
 
 	background-color: dimgray;
 	border-radius: 999px;
@@ -854,13 +861,14 @@ main {
 	transition-duration: 100ms;
 }
 
-.toggle-switch .switch-button::before {
+.toggle-switch input::before {
 	content: "";
 	position: absolute;
-	width: 16px;
-	height: 16px;
-	top: 4px;
-	left: 4px;
+
+	width: var(--switch-size);
+	height: var(--switch-size);
+	top: var(--switch-padding);
+	left: var(--switch-padding);
 
 	background-color: white;
 	border-radius: 50%;
@@ -868,10 +876,10 @@ main {
 	transition-duration: 100ms;
 }
 
-.toggle-switch input:checked+.switch-button::before {
-	transform: translateX(100%);
+.toggle-switch input:checked {
+	background-color: deepskyblue;
 }
 
-.toggle-switch input:checked+.switch-button {
-	background-color: deepskyblue;
+.toggle-switch input:checked::before {
+	left: calc(100% - var(--switch-size) - var(--switch-padding));
 }
