@@ -598,11 +598,11 @@ main {
 
 .modal-content {
 	box-sizing: border-box;
+	width: 575px;
 	max-height: 100%;
 	min-height: 250px;
 	margin: auto;
 	padding: 16px;
-	border: 2px solid black;
 	border-radius: 16px;
 	box-shadow: rgba(0 0 0 / 30%) 4px 4px 16px;
 
@@ -678,6 +678,10 @@ main {
 	overflow: auto;
 	scrollbar-width: thin;
 	scrollbar-gutter: stable;
+}
+
+.credits-link {
+	justify-self: right;
 }
 
 /* #endregion About page */

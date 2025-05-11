@@ -634,7 +634,8 @@
 		<div class="modal-content">
 			<div class="about-header">
 				<div style="margin: 12px; display: flex; flex-direction: column; gap: 4px;">
-					<span style="font-family: Minnie; font-size: clamp(18px, 4vw, 24px);">Toontown Gag Roller</span>
+					<span style="font-family: var(--font-minnie); font-size: clamp(18px, 4vw, 24px);">Toontown Gag
+						Roller</span>
 					<div style="display: flex; justify-content: space-between;">
 						<span>by octothecat</span>
 						<span>v1.0</span>
@@ -650,19 +651,29 @@
 				</button>
 			</div>
 
-			<div class="about-content" style="margin: 6px; padding: 6px;">
-				<!-- TODO about description -->
-				<span>how to use (gag buttons, gag track checkboxes, add/remove toons/cogs)</span>
+			<div class="about-content"
+				style="/*margin: 6px;*/ padding: 6px; display: flex; flex-direction: column; gap: 12px;">
+				<div style="display: flex; flex-direction: column; gap: 8px;">
+					<span>Welcome to the Toontown Gag Roller! Let fate decide what gag you'll use!</span>
+					<span>Click each gag on the gag panel to toggle them on and off. Disabled gag buttons won't be
+						rolled.</span>
+					<span>Use the checkboxes on the left to toggle the entire track.</span>
+					<span>The buttons on either side of the toon and cog display can be used to add or remove
+						one.</span>
+				</div>
 
-				<!-- TODO options -->
-				<p>options:</p>
 
-				<div>
+				<!-- TODO volume slider -->
+				<div
+					style="background: rgb(95%,95%,95%); border-radius: 8px; padding: 16px; box-shadow: 0 0 10px rgba(0 0 0 / 15%) inset;">
+					<span style="font-family: var(--font-minnie); font-size: 18px;">options</span>
+					<hr style="color: white;" />
+
 					<label class="input-label" for="volume-slider">Volume</label>
 					<input id="volume-slider" type="range" min="0" max="1.0" step="0.05" value="0.5">
 
-					<div class="options"
-						style="display: grid; grid-template-columns: 1fr auto; row-gap: 8px; column-gap: 64px; align-items: center; width: fit-content; margin: auto;">
+					<div class="options-grid"
+						style="display: grid; grid-template-columns: 1fr auto; row-gap: 8px; column-gap: 64px; align-items: center; max-width: 350px; margin: auto;">
 						<label class="input-label" for="do-roll-animation">Roll Animation</label>
 						<label class="toggle-switch">
 							<input type="checkbox" id="do-roll-animation" checked>
@@ -683,22 +694,31 @@
 					</div>
 				</div>
 
-				<!-- TODO credits -->
-				<p>credits:</p>
-				<ul>
-					<li>corporate clash: gag icons, toon icon, sounds</li>
-					<li>cc wiki: cog icon (tbd)</li>
-					<li>fonts</li>
-					<li>feather icons</li>
-					<li>confetti</li>
+				<div
+					style="background: rgb(95%,95%,95%); border-radius: 8px; padding: 16px; box-shadow: 0 0 10px rgba(0 0 0 / 15%) inset;">
+					<span style="font-family: var(--font-minnie); font-size: 18px;">credits</span>
+					<hr style="color: white;" />
 
-					<!--- [Corporate Clash](https://corporateclash.net/) - Gag icons and SFX
-						- [Corporate Clash Wiki](https://corporateclash.wiki.gg/) - Fonts (Minnie, Impress, VT Portable Remington)
-						- [Feather](https://github.com/feathericons/feather) - Other icons
-						- [tsParticles](https://github.com/tsparticles/tsparticles) - Confetti -->
-				</ul>
+					<div class="credits-grid"
+						style="display: grid; grid-template-columns: 1fr auto; align-items: center; row-gap: 8px; column-gap: 16px; max-width: 350px; margin: auto;">
+						<span class="credits-label">Gag Icons and SFX</span>
+						<a class="credits-link" target="_blank" href="https://corporateclash.net/">Corporate Clash</a>
 
-				<p>This site is not affiliated with Disney or Toontown: Corporate Clash.</p>
+						<span class="credits-label">Fonts</span>
+						<a class="credits-link" target="_blank" href="https://corporateclash.wiki.gg/">Corporate Clash
+							Wiki</a>
+
+						<span class="credits-label">Other Icons</span>
+						<a class="credits-link" target="_blank"
+							href="https://github.com/feathericons/feather">Feather</a>
+
+						<span class="credits-label">Confetti</span>
+						<a class="credits-link" target="_blank"
+							href="https://github.com/tsparticles/tsparticles">tsParticles</a>
+					</div>
+				</div>
+
+				<span>This site is not affiliated with Disney or Toontown: Corporate Clash.</span>
 				<a target="_blank" href="https://github.com/octothefeline/toontown-gag-roller"
 					style="display: inline-flex; gap: 4px;">
 					View on GitHub
