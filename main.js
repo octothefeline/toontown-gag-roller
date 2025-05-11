@@ -198,7 +198,6 @@ function DOMContentLoaded() {
 	// Recalculate tooltip positions when the window resizes
 	window.visualViewport.addEventListener("resize", recalculateTooltipPositions);
 
-	// TODO generate gag panel
 	document.getElementById("gag-panel").addEventListener("click", gagPanelEventListener);
 
 	document.querySelectorAll(".roll-button").forEach(b => b.addEventListener("click", rollButton));
@@ -300,7 +299,10 @@ function showRolledGag(roll, doConfetti = true) {
 }
 
 function rollSingleGag(doConfetti = true) {
-	showRolledGag(rollSequence(1)[0], doConfetti);
+	let gags = rollSequence(1);
+	if (gags) {
+		showRolledGag(gags[0], doConfetti);
+	}
 }
 
 /**
