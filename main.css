@@ -876,6 +876,16 @@ main {
 	transition-duration: 100ms;
 }
 
+.toggle-switch input:hover,
+.toggle-switch input:hover::before {
+	filter: brightness(115%);
+}
+
+.toggle-switch input:active,
+.toggle-switch input:active::before {
+	filter: brightness(85%);
+}
+
 .toggle-switch input:checked {
 	background-color: deepskyblue;
 }
