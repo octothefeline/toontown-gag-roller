@@ -2,9 +2,9 @@
 
 Toontown Gag Roller is a simple website that will randomly pick a Toontown gag for you. Choose how many toons and cogs you want, enable and disable certain gags from being rolled, and sit back while the power of random numbers decide your fate!
 
-This site is build from scratch using plain HTML, CSS, and Javascript. You won't be finding any frontend libraries in this repo.
+This site is built from scratch using plain HTML, CSS, and Javascript. You won't be finding any frontend libraries in this repo.
 
-I am by no means a web developer, nor a designer. This is just a for-fun project that I hope will be entertaining for people to play around with.
+I am by no means a web developer, nor a designer. This is just a for-fun project that I hope brings some entertainment to those who try it out.
 
 ## Running Locally
 
