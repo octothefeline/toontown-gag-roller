@@ -133,6 +133,13 @@ const gagData = {
 	}
 }
 
+const MAX_VOLUME = 0.30;
+
+const rollAudio = new Audio("assets/roll2.mp3");
+rollAudio.preload = "auto";
+rollAudio.load();
+rollAudio.volume = 0.15;
+
 if (document.readyState === "loading") {
 	// DOM still loading
 	document.addEventListener("DOMContentLoaded", DOMContentLoaded);
@@ -140,13 +147,6 @@ if (document.readyState === "loading") {
 	// DOM already loaded, immediately call event listener
 	DOMContentLoaded();
 }
-
-const MAX_VOLUME = 0.30;
-
-const rollAudio = new Audio("assets/roll2.mp3");
-rollAudio.preload = "auto";
-rollAudio.load();
-rollAudio.volume = 0.15;
 
 function DOMContentLoaded() {
 	const root = document.querySelector(":root");
@@ -180,7 +180,7 @@ function DOMContentLoaded() {
 		rollAudio.volume = event.target.value * MAX_VOLUME;
 	});
 
-	document.getElementById("toggle-bg").addEventListener("change", (event) => {
+	document.getElementById("do-moving-bg").addEventListener("change", (event) => {
 		(event.target.checked) ? document.body.classList.add("animate-background") : document.body.classList.remove("animate-background");
 	});
 
@@ -201,6 +201,45 @@ function DOMContentLoaded() {
 	document.getElementById("gag-panel").addEventListener("click", gagPanelEventListener);
 
 	document.querySelectorAll(".roll-button").forEach(b => b.addEventListener("click", rollButton));
+
+	// Set up config local storage
+	const volume = document.getElementById("volume-slider");
+	const rollAnimation = document.getElementById("do-roll-animation");
+	const confetti = document.getElementById("do-confetti");
+	const movingBg = document.getElementById("do-moving-bg");
+
+	volume.value = getOrDefault(localStorage.getItem("volume-slider"), 0.5);
+	rollAnimation.checked = getOrDefault(localStorage.getItem("do-roll-animation"), true) === "true";
+	confetti.checked = getOrDefault(localStorage.getItem("do-confetti"), true) === "true";
+	movingBg.checked = getOrDefault(localStorage.getItem("do-moving-bg"), false) === "true";
+
+	volume.dispatchEvent(new Event("input"));
+	movingBg.dispatchEvent(new Event("change"));
+
+	volume.addEventListener("change", configChanged);
+	rollAnimation.addEventListener("change", configChanged);
+	confetti.addEventListener("change", configChanged);
+	movingBg.addEventListener("change", configChanged);
+}
+
+/**
+ * @param {Event} event
+ */
+function configChanged(event) {
+	const target = event.target;
+
+	let value;
+	if (target.type == "checkbox") {
+		value = target.checked;
+	} else {
+		value = target.value;
+	}
+
+	localStorage.setItem(target.id, value);
+}
+
+function getOrDefault(value, def) {
+	return (typeof value === "undefined" || value === null) ? def : value;
 }
 
 const numRolls = 10;
