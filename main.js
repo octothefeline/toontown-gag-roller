@@ -154,8 +154,6 @@ function DOMContentLoaded() {
 		root.style.setProperty(`--track-${track}`, trackData.color);
 	}
 
-	rollSingleGag(false);
-
 	document.querySelectorAll(".checkbox").forEach(e => e.addEventListener("click", (event) => {
 		// Specifically when using VoiceOver on iOS, the event target is the SVG-use element instead of the checkbox itself, so set the target to the checkbox element.
 		// (This does not occur if the inner element is something other than an SVG element, such as an IMG element)
@@ -184,10 +182,10 @@ function DOMContentLoaded() {
 		(event.target.checked) ? document.body.classList.add("animate-background") : document.body.classList.remove("animate-background");
 	});
 
-	document.getElementById("button-add-cog").addEventListener("click", () => createTarget("cog"));
-	document.getElementById("button-remove-cog").addEventListener("click", () => removeTarget("cog"));
-	document.getElementById("button-add-toon").addEventListener("click", () => createTarget("toon"));
-	document.getElementById("button-remove-toon").addEventListener("click", () => removeTarget("toon"));
+	document.getElementById("button-add-cog").addEventListener("click", () => { createTarget("cog"); recalculateTooltipPositions(); });
+	document.getElementById("button-remove-cog").addEventListener("click", () => { removeTarget("cog"); recalculateTooltipPositions(); });
+	document.getElementById("button-add-toon").addEventListener("click", () => { createTarget("toon"); recalculateTooltipPositions(); });
+	document.getElementById("button-remove-toon").addEventListener("click", () => { removeTarget("toon"); recalculateTooltipPositions(); });
 
 	// Tooltip event listeners
 	document.querySelector("body").addEventListener("mouseover", tooltipStartHover);
@@ -220,6 +218,13 @@ function DOMContentLoaded() {
 	rollAnimation.addEventListener("change", configChanged);
 	confetti.addEventListener("change", configChanged);
 	movingBg.addEventListener("change", configChanged);
+
+	// Initialize targets
+	for (let i = 0; i < 4; i++) {
+		createTarget("toon");
+		createTarget("cog");
+	}
+	rollSingleGag(false);
 }
 
 /**
@@ -240,6 +245,12 @@ function configChanged(event) {
 
 function getOrDefault(value, def) {
 	return (typeof value === "undefined" || value === null) ? def : value;
+}
+
+function ordinalSuffix(num) {
+	let a = num % 10;
+	let b = num % 100;
+	return num + ((a == 1 && b != 11) ? "st" : (a == 2 && b != 12) ? "nd" : (a == 3 && b != 13) ? "rd" : "th");
 }
 
 const numRolls = 10;
@@ -300,12 +311,22 @@ function showRolledGag(roll, doConfetti = true) {
 	document.getElementById("rolled-gag-icon").style.setProperty("background-position", `calc(-${roll.textureX} * var(--gag-size)) calc(-${roll.textureY} * var(--gag-size))`);
 	document.getElementById("rolled-gag-label").textContent = roll.name;
 
-	// Clear active targets
-	document.querySelectorAll(".target").forEach(e => e.classList.remove("target-active"));
+	function setTargetInactive(target) {
+		target.classList.remove("target-active");
+
+		const icon = target.querySelector(".target-icon");
+		icon.ariaLabel = icon.ariaLabel.replace(", targeted", "");
+	}
 
 	function setTargetActive(target) {
 		target.classList.add("target-active");
+
+		const icon = target.querySelector(".target-icon");
+		icon.ariaLabel = icon.ariaLabel + ", targeted";
 	}
+
+	// Clear all active targets
+	document.querySelectorAll(".target").forEach(e => setTargetInactive(e));
 
 	if (!roll.target) {
 		// All targets
@@ -430,12 +451,16 @@ function rollSequence(sequenceLength) {
 function createTarget(type) {
 	const targetContainer = document.getElementById(`${type}-targets`);
 
+	const targetNum = targetContainer.childElementCount + 1;
+
 	const target = document.createElement("div");
 	target.classList.add("target", `${type}-target`);
 
 	const arrow = document.createElement("img");
 	arrow.className = "target-arrow";
 	arrow.src = "assets/target.png";
+	arrow.alt = "Target Arrow";
+	arrow.role = "none";
 	target.appendChild(arrow);
 
 	const iconContainer = document.createElement("div");
@@ -444,18 +469,19 @@ function createTarget(type) {
 		const iconImg = document.createElement("img");
 		iconImg.className = "target-icon";
 		iconImg.src = `assets/${type}.png`;
+		iconImg.alt = `${type} icon`;
+		iconImg.ariaLabel = `${ordinalSuffix(targetNum)} ${type} from the right`;
 		iconContainer.appendChild(iconImg);
 
 		const iconLabel = document.createElement("span");
 		iconLabel.className = "target-icon-label";
-		iconLabel.textContent = targetContainer.childElementCount + 1;
+		iconLabel.textContent = targetNum;
+		iconLabel.ariaHidden = true;
 		iconContainer.appendChild(iconLabel);
 	}
 	target.appendChild(iconContainer);
 
 	targetContainer.prepend(target);
-
-	recalculateTooltipPositions();
 }
 
 /**
@@ -466,7 +492,6 @@ function removeTarget(type) {
 
 	if (targetContainer.childElementCount > 1) {
 		targetContainer.firstElementChild.remove();
-		recalculateTooltipPositions();
 	}
 }
 
