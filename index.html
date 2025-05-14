@@ -22,8 +22,9 @@
 <body>
 	<header id="title" class="title-container">
 		<h1 class="title-text">Toontown Gag Roller</h1>
-		<button id="about-button-open" class="title-button" data-tooltip="About" data-tooltip-position="bottom">
-			<svg class="title-button-icon">
+		<button id="about-button-open" class="title-button" data-tooltip="About" data-tooltip-position="bottom"
+			aria-label="Open about page">
+			<svg class="title-button-icon" aria-hidden="true">
 				<use href="assets/feather-sprite.svg#info" />
 			</svg>
 		</button>
@@ -32,9 +33,9 @@
 	<main id="main-content">
 		<section class="battle-panel-section">
 			<div class="target-row">
-				<button id="button-add-cog" class="target-button" data-tooltip="Add a Cog"
-					data-tooltip-position="right">
-					<svg class="target-button-icon">
+				<button id="button-add-cog" class="target-button" data-tooltip="Add a Cog" data-tooltip-position="right"
+					aria-label="Add a Cog">
+					<svg class="target-button-icon" aria-hidden="true">
 						<use href="assets/feather-sprite.svg#plus" />
 					</svg>
 				</button>
@@ -71,8 +72,8 @@
 				</div>
 
 				<button id="button-remove-cog" class="target-button" data-tooltip="Remove a Cog"
-					data-tooltip-position="left">
-					<svg class="target-button-icon">
+					data-tooltip-position="left" aria-label="Remove a Cog">
+					<svg class="target-button-icon" aria-hidden="true">
 						<use href="assets/feather-sprite.svg#minus" />
 					</svg>
 				</button>
@@ -87,8 +88,8 @@
 
 			<div class="target-row">
 				<button id="button-add-toon" class="target-button" data-tooltip="Add a Toon"
-					data-tooltip-position="right">
-					<svg class="target-button-icon">
+					data-tooltip-position="right" aria-label="Add a Toon">
+					<svg class="target-button-icon" aria-hidden="true">
 						<use href="assets/feather-sprite.svg#plus" />
 					</svg>
 				</button>
@@ -125,8 +126,8 @@
 				</div>
 
 				<button id="button-remove-toon" class="target-button" data-tooltip="Remove a Toon"
-					data-tooltip-position="left">
-					<svg class="target-button-icon">
+					data-tooltip-position="left" aria-label="Remove a Toon">
+					<svg class="target-button-icon" aria-hidden="true">
 						<use href="assets/feather-sprite.svg#minus" />
 					</svg>
 				</button>
@@ -151,7 +152,7 @@
 						<div style="--color: var(--track-drop);"></div>
 					</div>
 
-					<div class="gag-panel" id="gag-panel" role="presentation">
+					<div class="gag-panel" id="gag-panel" role="none">
 						<div class="gag-panel-row" data-track="toon-up" style="--color: var(--track-toon-up);">
 							<button role="checkbox" class="checkbox toggle-track" aria-label="Toggle Toon-Up Track"
 								aria-checked="true" data-tooltip="Toggle Toon-Up Track" data-tooltip-position="right">
@@ -648,8 +649,9 @@
 						<span>v1.0</span>
 					</div>
 				</div>
-				<button id="about-button-close" class="about-close" data-tooltip="Close" data-tooltip-position="bottom">
-					<svg class="about-close-icon">
+				<button id="about-button-close" class="about-close" data-tooltip="Close" data-tooltip-position="bottom"
+					aria-label="Close about page">
+					<svg class="about-close-icon" aria-hidden="true">
 						<use href="assets/feather-sprite.svg#x" />
 					</svg>
 				</button>
