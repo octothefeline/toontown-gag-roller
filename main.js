@@ -466,12 +466,20 @@ function createTarget(type) {
 	const iconContainer = document.createElement("div");
 	iconContainer.className = "target-icon-container";
 	{
-		const iconImg = document.createElement("img");
-		iconImg.className = "target-icon";
-		iconImg.src = `assets/${type}.png`;
-		iconImg.alt = `${type} icon`;
-		iconImg.ariaLabel = `${ordinalSuffix(targetNum)} ${type} from the right`;
-		iconContainer.appendChild(iconImg);
+		const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		iconSvg.setAttribute("class", "target-icon");
+		iconSvg.setAttribute("viewBox", (type == "toon") ? "0 0 108 108" : "0 0 110 110");
+		iconSvg.ariaLabel = `${ordinalSuffix(targetNum)} ${type} from the right`;
+		iconSvg.role = "img";
+
+		const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		iconPath.setAttribute("d", (type == "toon")
+			? "M7.31 12.44c12.19-2.94 24.75 3.81 32.81 6 7.14-2.96 22.58-2.14 27.63-.13 7.56-2.06 20.75-8.31 32.63-6.37 3.48 4.45-2.5 18.94-5.13 24.06 2.81 3.81 3.69 5.63 4.66 8 1.8 4.43 2.54 9.23 2.34 14C101.28 81.88 79.8 97.73 57 98h-7C28.49 97.74 5.08 81.07 5.08 58c0-4.64 1.48-10.77 3.36-15 .98-2.2 2.5-4.38 4.31-7.56-2.5-6.75-8.81-14.69-5.44-23z"
+			: "M15.5 19.12 38 6.25 44 22l14.62-.62 6.63-17.76 27 14-10.37 14L87.75 39l16.63-4 .5 30.88-15.38.74-3.88 11.88 8.76 12.88L72 105l-6.25-16.5-14.13.5-7.24 17.88-26-13.5L27.5 79.5l-5.38-8.38-16.39 4.43-1.28-31.28 15.91-.82s3.39-10.57 3.26-10.57c-.12 0-8.12-13.76-8.12-13.76z"
+		);
+
+		iconSvg.appendChild(iconPath);
+		iconContainer.appendChild(iconSvg);
 
 		const iconLabel = document.createElement("span");
 		iconLabel.className = "target-icon-label";
