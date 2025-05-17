@@ -207,9 +207,9 @@ function DOMContentLoaded() {
 	const movingBg = document.getElementById("do-moving-bg");
 
 	volume.value = getOrDefault(localStorage.getItem("volume-slider"), 0.5);
-	rollAnimation.checked = getOrDefault(localStorage.getItem("do-roll-animation"), true) === "true";
-	confetti.checked = getOrDefault(localStorage.getItem("do-confetti"), true) === "true";
-	movingBg.checked = getOrDefault(localStorage.getItem("do-moving-bg"), false) === "true";
+	rollAnimation.checked = getOrDefault(localStorage.getItem("do-roll-animation"), "true") === "true";
+	confetti.checked = getOrDefault(localStorage.getItem("do-confetti"), "true") === "true";
+	movingBg.checked = getOrDefault(localStorage.getItem("do-moving-bg"), "false") === "true";
 
 	volume.dispatchEvent(new Event("input"));
 	movingBg.dispatchEvent(new Event("change"));
