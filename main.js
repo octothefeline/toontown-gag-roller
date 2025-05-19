@@ -1,4 +1,63 @@
-// #region Initialize page
+// #region Utilities
+
+/**
+ * Checks whether or not the specified element is hidden or its parents are hidden.
+ * 
+ * @param {HTMLElement} element 
+ */
+function elementIsHidden(element) {
+	while (element) {
+		if (window.getComputedStyle(element).display == "none") {
+			return true;
+		}
+
+		element = element.parentElement;
+	}
+
+	return false;
+}
+
+/**
+ * Checks the provided element and its parent elements for the specified attribute name.
+ * 
+ * @param {HTMLElement} element 
+ * @param {String} attr 
+ * @returns Attribute value or null if not found
+ */
+function inheritedAttribute(element, attr) {
+	let value = null;
+	while (element && !(value = element.getAttribute(attr))) {
+		element = element.parentElement;
+	}
+	return value;
+}
+
+function shuffle(list) {
+	let i = list.length;
+
+	while (i > 0) {
+		let j = Math.floor(Math.random() * i);
+		i--;
+		[list[i], list[j]] = [list[j], list[i]];
+	}
+
+	return list;
+}
+
+function ordinalSuffix(num) {
+	let a = num % 10;
+	let b = num % 100;
+	return num + ((a == 1 && b != 11) ? "st" : (a == 2 && b != 12) ? "nd" : (a == 3 && b != 13) ? "rd" : "th");
+}
+
+function getOrDefault(value, def) {
+	return (typeof value === "undefined" || value === null) ? def : value;
+}
+
+// #endregion
+
+
+// #region Globals
 
 const gagData = {
 	server: "Corporate Clash",
@@ -133,12 +192,26 @@ const gagData = {
 	}
 }
 
-const MAX_VOLUME = 0.30;
+const numRolls = 10;
+const rollSpeedMs = 140;
+
+const maxVolume = 0.30;
 
 const rollAudio = new Audio("assets/roll2.mp3");
 rollAudio.preload = "auto";
 rollAudio.load();
 rollAudio.volume = 0.15;
+
+// Defined in CSS
+const modalOpenAnimationTime = 200;
+const modalCloseAnimationTime = 200;
+const tooltipArrowSize = 6;
+const tooltipTransitionTime = 150;
+
+// #endregion
+
+
+// #region Initialize page
 
 if (document.readyState === "loading") {
 	// DOM still loading
@@ -149,11 +222,6 @@ if (document.readyState === "loading") {
 }
 
 function DOMContentLoaded() {
-	const root = document.querySelector(":root");
-	for (const [track, trackData] of Object.entries(gagData.tracks)) {
-		root.style.setProperty(`--track-${track}`, trackData.color);
-	}
-
 	document.querySelectorAll(".checkbox").forEach(e => e.addEventListener("click", (event) => {
 		// Specifically when using VoiceOver on iOS, the event target is the SVG-use element instead of the checkbox itself, so set the target to the checkbox element.
 		// (This does not occur if the inner element is something other than an SVG element, such as an IMG element)
@@ -161,6 +229,15 @@ function DOMContentLoaded() {
 		target.ariaChecked = (target.ariaChecked === "true") ? "false" : "true";
 	}));
 
+	initAboutModal();
+	initGagRoller();
+	initTooltips();
+	initConfig();
+
+	rollSingleGag({ doConfetti: false, shouldScrollView: false });
+}
+
+function initAboutModal() {
 	document.getElementById("about-button-open").addEventListener("click", openAboutModal);
 	document.getElementById("about-button-close").addEventListener("click", closeAboutModal);
 
@@ -173,20 +250,33 @@ function DOMContentLoaded() {
 		if (event.key === "Escape")
 			closeAboutModal();
 	});
+}
 
-	document.getElementById("volume-slider").addEventListener("input", (event) => {
-		rollAudio.volume = event.target.value * MAX_VOLUME;
-	});
+function initGagRoller() {
+	// Track colors
+	const root = document.querySelector(":root");
+	for (const [track, trackData] of Object.entries(gagData.tracks)) {
+		root.style.setProperty(`--track-${track}`, trackData.color);
+	}
 
-	document.getElementById("do-moving-bg").addEventListener("change", (event) => {
-		(event.target.checked) ? document.body.classList.add("animate-background") : document.body.classList.remove("animate-background");
-	});
-
+	// Target buttons
 	document.getElementById("button-add-cog").addEventListener("click", () => { createTarget("cog"); recalculateTooltipPositions(); });
 	document.getElementById("button-remove-cog").addEventListener("click", () => { removeTarget("cog"); recalculateTooltipPositions(); });
 	document.getElementById("button-add-toon").addEventListener("click", () => { createTarget("toon"); recalculateTooltipPositions(); });
 	document.getElementById("button-remove-toon").addEventListener("click", () => { removeTarget("toon"); recalculateTooltipPositions(); });
 
+	// Initialize targets
+	for (let i = 0; i < 4; i++) {
+		createTarget("toon");
+		createTarget("cog");
+	}
+
+	// Gag panel buttons
+	document.getElementById("gag-panel").addEventListener("click", gagPanelEventListener);
+	document.querySelectorAll(".roll-button").forEach(b => b.addEventListener("click", rollButton));
+}
+
+function initTooltips() {
 	// Tooltip event listeners
 	document.querySelector("body").addEventListener("mouseover", tooltipStartHover);
 	document.querySelector("body").addEventListener("mouseout", tooltipStopHover);
@@ -195,36 +285,35 @@ function DOMContentLoaded() {
 
 	// Recalculate tooltip positions when the window resizes
 	window.visualViewport.addEventListener("resize", recalculateTooltipPositions);
+}
 
-	document.getElementById("gag-panel").addEventListener("click", gagPanelEventListener);
-
-	document.querySelectorAll(".roll-button").forEach(b => b.addEventListener("click", rollButton));
-
-	// Set up config local storage
+function initConfig() {
 	const volume = document.getElementById("volume-slider");
-	const rollAnimation = document.getElementById("do-roll-animation");
+	const rollAnim = document.getElementById("do-roll-animation");
 	const confetti = document.getElementById("do-confetti");
 	const movingBg = document.getElementById("do-moving-bg");
 
+	// Set input element states
 	volume.value = getOrDefault(localStorage.getItem("volume-slider"), 0.5);
-	rollAnimation.checked = getOrDefault(localStorage.getItem("do-roll-animation"), "true") === "true";
+	rollAnim.checked = getOrDefault(localStorage.getItem("do-roll-animation"), "true") === "true";
 	confetti.checked = getOrDefault(localStorage.getItem("do-confetti"), "true") === "true";
 	movingBg.checked = getOrDefault(localStorage.getItem("do-moving-bg"), "false") === "true";
 
-	volume.dispatchEvent(new Event("input"));
-	movingBg.dispatchEvent(new Event("change"));
-
+	// Add event listeners
 	volume.addEventListener("change", configChanged);
-	rollAnimation.addEventListener("change", configChanged);
+	rollAnim.addEventListener("change", configChanged);
 	confetti.addEventListener("change", configChanged);
 	movingBg.addEventListener("change", configChanged);
 
-	// Initialize targets
-	for (let i = 0; i < 4; i++) {
-		createTarget("toon");
-		createTarget("cog");
-	}
-	rollSingleGag(false);
+	volume.addEventListener("input", (event) => {
+		rollAudio.volume = event.target.value * maxVolume;
+	});
+	movingBg.addEventListener("change", (event) => {
+		(event.target.checked) ? document.body.classList.add("animate-background") : document.body.classList.remove("animate-background");
+	});
+
+	volume.dispatchEvent(new Event("input"));
+	movingBg.dispatchEvent(new Event("change"));
 }
 
 /**
@@ -241,208 +330,6 @@ function configChanged(event) {
 	}
 
 	localStorage.setItem(target.id, value);
-}
-
-function getOrDefault(value, def) {
-	return (typeof value === "undefined" || value === null) ? def : value;
-}
-
-function ordinalSuffix(num) {
-	let a = num % 10;
-	let b = num % 100;
-	return num + ((a == 1 && b != 11) ? "st" : (a == 2 && b != 12) ? "nd" : (a == 3 && b != 13) ? "rd" : "th");
-}
-
-const numRolls = 10;
-const rollSpeedMs = 140;
-
-let currentRollTimeout;
-let currentRollSequence;
-
-function rollButton() {
-	if (document.getElementById("do-roll-animation").checked) {
-		startRoll();
-	} else {
-		rollSingleGag(document.getElementById("do-confetti").checked);
-	}
-}
-
-function startRoll() {
-	const battlePanel = document.querySelector(".battle-panel-section");
-	if (battlePanel.getBoundingClientRect().top < 0) {
-		// Only scroll if the battle panel is off screen
-		battlePanel.scrollIntoView({ behavior: "smooth" });
-	}
-
-	document.getElementById("button-add-cog").setAttribute("disabled", "");
-	document.getElementById("button-remove-cog").setAttribute("disabled", "");
-	document.getElementById("button-add-toon").setAttribute("disabled", "");
-	document.getElementById("button-remove-toon").setAttribute("disabled", "");
-
-	currentRollSequence = rollSequence(numRolls);
-	if (currentRollSequence) {
-		rollAudio.currentTime = 0;
-		rollAudio.play();
-		rollAnimation();
-	}
-}
-
-function rollAnimation(frame = 0) {
-	clearTimeout(currentRollTimeout);
-
-	let isLastRoll = frame >= numRolls - 1;
-
-	if (isLastRoll) {
-		// Roll animation complete
-		document.getElementById("button-add-cog").removeAttribute("disabled");
-		document.getElementById("button-remove-cog").removeAttribute("disabled");
-		document.getElementById("button-add-toon").removeAttribute("disabled");
-		document.getElementById("button-remove-toon").removeAttribute("disabled");
-	} else {
-		// Continue animation
-		currentRollTimeout = setTimeout(() => { rollAnimation(frame + 1); }, rollSpeedMs);
-	}
-
-	showRolledGag(currentRollSequence[frame], document.getElementById("do-confetti").checked && isLastRoll);
-}
-
-function showRolledGag(roll, doConfetti = true) {
-	document.getElementById("rolled-gag-bg").style.setProperty("background", `var(--track-${roll.track})`);
-	document.getElementById("rolled-gag-icon").style.setProperty("background-position", `calc(-${roll.textureX} * var(--gag-size)) calc(-${roll.textureY} * var(--gag-size))`);
-	document.getElementById("rolled-gag-label").textContent = roll.name;
-
-	function setTargetInactive(target) {
-		target.classList.remove("target-active");
-
-		const icon = target.querySelector(".target-icon");
-		icon.ariaLabel = icon.ariaLabel.replace(", targeted", "");
-	}
-
-	function setTargetActive(target) {
-		target.classList.add("target-active");
-
-		const icon = target.querySelector(".target-icon");
-		icon.ariaLabel = icon.ariaLabel + ", targeted";
-	}
-
-	// Clear all active targets
-	document.querySelectorAll(".target").forEach(e => setTargetInactive(e));
-
-	if (!roll.target) {
-		// All targets
-		if (roll.targetType == "COGS") {
-			document.querySelectorAll("#cog-targets > .target").forEach(e => setTargetActive(e));
-		} else if (roll.targetType == "TOONS") {
-			document.querySelectorAll("#toon-targets > .target").forEach(e => setTargetActive(e));
-		}
-	} else {
-		// Single target
-		setTargetActive(roll.target);
-	}
-
-	if (doConfetti) {
-		const gagIcon = document.getElementById("rolled-gag").getBoundingClientRect();
-
-		confetti({
-			spread: 270,
-			gravity: 0,
-			decay: 0.96,
-			startVelocity: 15,
-			particleCount: 50,
-			scalar: 1.25,
-			origin: {
-				x: (gagIcon.x + gagIcon.width / 2) / window.innerWidth,
-				y: (gagIcon.y + gagIcon.height / 2) / window.innerHeight
-			}
-		});
-	}
-}
-
-function rollSingleGag(doConfetti = true) {
-	let gags = rollSequence(1);
-	if (gags) {
-		showRolledGag(gags[0], doConfetti);
-	}
-}
-
-/**
- * @param {HTMLElement} element 
- */
-function elementIsHidden(element) {
-	while (element) {
-		if (window.getComputedStyle(element).display == "none") {
-			return true;
-		}
-
-		element = element.parentElement;
-	}
-
-	return false;
-}
-
-/**
- * @param {HTMLElement} element 
- * @param {String} attr 
- * @returns Attribute value or null
- */
-function inheritedAttribute(element, attr) {
-	let value = null;
-	while (element && !(value = element.getAttribute(attr))) {
-		element = element.parentElement;
-	}
-	return value;
-}
-
-function shuffle(list) {
-	let i = list.length;
-
-	while (i > 0) {
-		let j = Math.floor(Math.random() * i);
-		i--;
-		[list[i], list[j]] = [list[j], list[i]];
-	}
-
-	return list;
-}
-
-function rollSequence(sequenceLength) {
-	const gagButtons = document.getElementById("gag-panel").querySelectorAll(".gag-button:not(.disabled):not(.hidden)");
-
-	const cogs = document.getElementById("cog-targets").querySelectorAll(".target");
-	const toons = document.getElementById("toon-targets").querySelectorAll(".target");
-
-	if (gagButtons.length == 0) {
-		return null;
-	}
-
-	const sequence = Array(sequenceLength);
-
-	for (let i = 0; i < sequenceLength; i++) {
-		const randomGag = gagButtons[Math.floor(Math.random() * gagButtons.length)];
-
-		const track = inheritedAttribute(randomGag, "data-track");
-		const level = randomGag.dataset.level;
-
-		const trackData = gagData.tracks[track];
-		const gag = trackData.gags[level - 1];
-
-		const target = (gag.targets == "ALL")
-			? null
-			: (trackData.targetType == "COGS")
-				? cogs[Math.floor(Math.random() * cogs.length)]
-				: toons[Math.floor(Math.random() * toons.length)];
-
-		sequence[i] = {
-			name: gag.name,
-			track: track,
-			target: target,
-			targetType: trackData.targetType,
-			textureX: gag.x,
-			textureY: gag.y,
-		};
-	}
-
-	return sequence;
 }
 
 /**
@@ -505,10 +392,175 @@ function removeTarget(type) {
 
 // #endregion
 
+
+//#region Gag rolling
+
+function rollButton() {
+	if (document.getElementById("do-roll-animation").checked) {
+		startRollAnimation();
+	} else {
+		rollSingleGag();
+	}
+}
+
+let currentRollInterval;
+
+function startRollAnimation() {
+	clearInterval(currentRollInterval);
+
+	const currentRollSequence = rollSequence(numRolls);
+	if (!currentRollSequence) {
+		return;
+	}
+
+	let frame = 0;
+
+	function doAnimationFrame() {
+		let isLastRoll = frame >= numRolls - 1;
+
+		if (isLastRoll) {
+			// Roll animation complete
+			document.getElementById("button-add-cog").removeAttribute("disabled");
+			document.getElementById("button-remove-cog").removeAttribute("disabled");
+			document.getElementById("button-add-toon").removeAttribute("disabled");
+			document.getElementById("button-remove-toon").removeAttribute("disabled");
+
+			clearInterval(currentRollInterval);
+		}
+
+		let doConfetti = isLastRoll && document.getElementById("do-confetti").checked;
+		showRolledGag(currentRollSequence[frame], { isLastRoll: isLastRoll, doConfetti: doConfetti });
+
+		frame++;
+	}
+
+	const battlePanel = document.querySelector(".battle-panel-section");
+	if (battlePanel.getBoundingClientRect().top < 0) {
+		battlePanel.scrollIntoView({ behavior: "smooth" });
+	}
+
+	document.getElementById("button-add-cog").setAttribute("disabled", "");
+	document.getElementById("button-remove-cog").setAttribute("disabled", "");
+	document.getElementById("button-add-toon").setAttribute("disabled", "");
+	document.getElementById("button-remove-toon").setAttribute("disabled", "");
+
+	rollAudio.currentTime = 0;
+	rollAudio.play();
+
+	doAnimationFrame();
+	currentRollInterval = setInterval(doAnimationFrame, rollSpeedMs);
+}
+
+function rollSingleGag({ doConfetti = true, shouldScrollView = true } = {}) {
+	let gags = rollSequence(1);
+	if (gags) {
+		showRolledGag(gags[0], { isLastRoll: true, doConfetti: doConfetti, shouldScrollView: shouldScrollView });
+	}
+}
+
+function showRolledGag(roll, { isLastRoll, doConfetti, shouldScrollView = true }) {
+	document.getElementById("rolled-gag-bg").style.setProperty("background", `var(--track-${roll.track})`);
+	document.getElementById("rolled-gag-icon").style.setProperty("background-position", `calc(-${roll.textureX} * var(--gag-size)) calc(-${roll.textureY} * var(--gag-size))`);
+	document.getElementById("rolled-gag-label").textContent = roll.name;
+
+	function setTargetInactive(target) {
+		target.classList.remove("target-active");
+
+		const icon = target.querySelector(".target-icon");
+		icon.ariaLabel = icon.ariaLabel.replace(", targeted", "");
+	}
+
+	function setTargetActive(target) {
+		target.classList.add("target-active");
+
+		const icon = target.querySelector(".target-icon");
+		icon.ariaLabel = icon.ariaLabel + ", targeted";
+	}
+
+	// Clear all active targets
+	document.querySelectorAll(".target").forEach(e => setTargetInactive(e));
+
+	if (roll.target) {
+		// Single target
+		setTargetActive(roll.target);
+	} else {
+		// All targets
+		if (roll.targetType == "COGS") {
+			document.querySelectorAll("#cog-targets > .target").forEach(e => setTargetActive(e));
+		} else if (roll.targetType == "TOONS") {
+			document.querySelectorAll("#toon-targets > .target").forEach(e => setTargetActive(e));
+		}
+	}
+
+	if (isLastRoll) {
+		if (shouldScrollView && roll.target) {
+			roll.target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+		}
+
+		if (doConfetti && document.getElementById("do-confetti").checked) {
+			const gagIcon = document.getElementById("rolled-gag").getBoundingClientRect();
+
+			confetti({
+				spread: 270,
+				gravity: 0,
+				decay: 0.96,
+				startVelocity: 15,
+				particleCount: 50,
+				scalar: 1.25,
+				origin: {
+					x: (gagIcon.x + gagIcon.width / 2) / window.innerWidth,
+					y: (gagIcon.y + gagIcon.height / 2) / window.innerHeight
+				}
+			});
+		}
+	}
+}
+
+function rollSequence(sequenceLength) {
+	const gagButtons = document.getElementById("gag-panel").querySelectorAll(".gag-button:not(.disabled):not(.hidden)");
+
+	const cogs = document.getElementById("cog-targets").querySelectorAll(".target");
+	const toons = document.getElementById("toon-targets").querySelectorAll(".target");
+
+	if (gagButtons.length == 0) {
+		return null;
+	}
+
+	const sequence = Array(sequenceLength);
+
+	for (let i = 0; i < sequenceLength; i++) {
+		const randomGag = gagButtons[Math.floor(Math.random() * gagButtons.length)];
+
+		const track = inheritedAttribute(randomGag, "data-track");
+		const level = randomGag.dataset.level;
+
+		const trackData = gagData.tracks[track];
+		const gag = trackData.gags[level - 1];
+
+		const target = (gag.targets == "ALL")
+			? null
+			: (trackData.targetType == "COGS")
+				? cogs[Math.floor(Math.random() * cogs.length)]
+				: toons[Math.floor(Math.random() * toons.length)];
+
+		sequence[i] = {
+			name: gag.name,
+			track: track,
+			target: target,
+			targetType: trackData.targetType,
+			textureX: gag.x,
+			textureY: gag.y,
+		};
+	}
+
+	return sequence;
+}
+
+// #endregion
+
+
 // #region About modal
 
-const modalOpenAnimationTime = 200;
-const modalCloseAnimationTime = 200;
 let openModalTimeout, closeModalTimeout;
 
 function openAboutModal() {
@@ -559,12 +611,11 @@ function closeAboutModal() {
 	clearTooltips();
 }
 
-// #endregion About modal
+// #endregion
 
-// #region Tooltip functionality
 
-const tooltipArrowSize = 6;
-const tooltipTransitionTime = 150;
+// #region Tooltips
+
 /** Target element -> Tooltip { element, timeout } */
 const tooltipMap = new Map();
 
@@ -671,9 +722,10 @@ function clearTooltips() {
 	tooltipMap.forEach((tooltip, target) => tooltipStopHover({ target: target, type: "clear-tooltips" }));
 }
 
-// #endregion Tooltip functionality
+// #endregion
 
-// #region Gag panel functionality
+
+// #region Gag panel
 
 /**
  * @param {MouseEvent} event
