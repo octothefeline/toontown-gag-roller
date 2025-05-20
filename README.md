@@ -16,3 +16,4 @@ Clone this repository, and simply run an HTTP server (such as [http-server](http
 - [Corporate Clash Wiki](https://corporateclash.wiki.gg/) - Fonts (Minnie, Impress, VT Portable Remington)
 - [Feather](https://github.com/feathericons/feather) - Other icons
 - [tsParticles](https://github.com/tsparticles/tsparticles) - Confetti particles
+- [howler.js](https://howlerjs.com/) - Audio library

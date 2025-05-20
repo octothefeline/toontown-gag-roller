@@ -195,12 +195,9 @@ const gagData = {
 const numRolls = 10;
 const rollSpeedMs = 140;
 
-const maxVolume = 0.30;
-
-const rollAudio = new Audio("assets/roll2.mp3");
-rollAudio.preload = "auto";
-rollAudio.load();
-rollAudio.volume = 0.15;
+const maxAudioVolume = 0.30;
+const soundTick = new Howl({ src: "assets/MG_sfx_travel_game_red_arrow.mp3" });
+const soundFanfare = new Howl({ src: "assets/SZ_MM_fanfare.mp3" });
 
 // Defined in CSS
 const modalOpenAnimationTime = 200;
@@ -229,10 +226,11 @@ function DOMContentLoaded() {
 		target.ariaChecked = (target.ariaChecked === "true") ? "false" : "true";
 	}));
 
+	initConfig();
 	initAboutModal();
 	initGagRoller();
 	initTooltips();
-	initConfig();
+	initAudio();
 
 	rollSingleGag({ doConfetti: false, shouldScrollView: false });
 }
@@ -305,14 +303,11 @@ function initConfig() {
 	confetti.addEventListener("change", configChanged);
 	movingBg.addEventListener("change", configChanged);
 
-	volume.addEventListener("input", (event) => {
-		rollAudio.volume = event.target.value * maxVolume;
-	});
+	volume.addEventListener("input", updateAudioVolume);
 	movingBg.addEventListener("change", (event) => {
 		(event.target.checked) ? document.body.classList.add("animate-background") : document.body.classList.remove("animate-background");
 	});
 
-	volume.dispatchEvent(new Event("input"));
 	movingBg.dispatchEvent(new Event("change"));
 }
 
@@ -330,6 +325,18 @@ function configChanged(event) {
 	}
 
 	localStorage.setItem(target.id, value);
+}
+
+function initAudio() {
+	updateAudioVolume();
+}
+
+function getCurrentVolume() {
+	return document.getElementById("volume-slider").value * maxAudioVolume;
+}
+
+function updateAudioVolume() {
+	Howler.volume(getCurrentVolume());
 }
 
 /**
@@ -420,12 +427,16 @@ function startRollAnimation() {
 
 		if (isLastRoll) {
 			// Roll animation complete
+			soundFanfare.play();
+
 			document.getElementById("button-add-cog").removeAttribute("disabled");
 			document.getElementById("button-remove-cog").removeAttribute("disabled");
 			document.getElementById("button-add-toon").removeAttribute("disabled");
 			document.getElementById("button-remove-toon").removeAttribute("disabled");
 
 			clearInterval(currentRollInterval);
+		} else {
+			soundTick.play();
 		}
 
 		let doConfetti = isLastRoll && document.getElementById("do-confetti").checked;
@@ -443,9 +454,6 @@ function startRollAnimation() {
 	document.getElementById("button-remove-cog").setAttribute("disabled", "");
 	document.getElementById("button-add-toon").setAttribute("disabled", "");
 	document.getElementById("button-remove-toon").setAttribute("disabled", "");
-
-	rollAudio.currentTime = 0;
-	rollAudio.play();
 
 	doAnimationFrame();
 	currentRollInterval = setInterval(doAnimationFrame, rollSpeedMs);
