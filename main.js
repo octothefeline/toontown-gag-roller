@@ -467,7 +467,7 @@ function rollSingleGag({ doConfetti = true, shouldScrollView = true } = {}) {
 }
 
 function showRolledGag(roll, { isLastRoll, doConfetti, shouldScrollView = true }) {
-	document.getElementById("rolled-gag-bg").style.setProperty("background", `var(--track-${roll.track})`);
+	document.getElementById("rolled-gag").style.setProperty("background", `var(--track-${roll.track})`);
 	document.getElementById("rolled-gag-icon").style.setProperty("background-position", `calc(-${roll.textureX} * var(--gag-size)) calc(-${roll.textureY} * var(--gag-size))`);
 	document.getElementById("rolled-gag-label").textContent = roll.name;
 

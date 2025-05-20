@@ -299,14 +299,10 @@ main {
 #rolled-gag {
 	--gag-size: 72px;
 
-	max-width: fit-content;
+	width: fit-content;
+	height: fit-content;
 	margin: auto;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
 
-#rolled-gag-bg {
 	border: 3px solid black;
 	border-radius: 50%;
 	padding: 12px;
@@ -323,6 +319,9 @@ main {
 }
 
 #rolled-gag-label {
+	width: fit-content;
+	margin: auto;
+
 	font-family: var(--font-impress);
 	font-size: 26px;
 	-webkit-user-select: text;
