@@ -251,6 +251,20 @@ main {
 	line-height: 0;
 }
 
+button.target-icon-container {
+	padding: 0;
+	border: 0;
+	background: none;
+}
+
+button.target-icon-container:hover {
+	filter: brightness(90%);
+}
+
+button.target-icon-container:active {
+	filter: brightness(75%);
+}
+
 .target-icon {
 	width: 64px;
 	height: 64px;
@@ -270,13 +284,22 @@ main {
 	stroke: rgb(50% 50% 50%);
 }
 
+.selected-toon .target-icon {
+	fill: rgb(0, 255, 8);
+	stroke: rgb(0, 124, 4);
+}
+
 .target-icon-label {
 	font-size: 28px;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate3d(-50%, -50%, 0);
+
+	color: black;
 	text-shadow: 2px 2px 2px rgba(0 0 0 / 15%);
+
+	pointer-events: none;
 }
 
 .cog-target .target-icon-label {

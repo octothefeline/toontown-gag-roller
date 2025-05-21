@@ -192,6 +192,9 @@ const gagData = {
 	}
 }
 
+const toonSvgPath = "M7.31 12.44c12.19-2.94 24.75 3.81 32.81 6 7.14-2.96 22.58-2.14 27.63-.13 7.56-2.06 20.75-8.31 32.63-6.37 3.48 4.45-2.5 18.94-5.13 24.06 2.81 3.81 3.69 5.63 4.66 8 1.8 4.43 2.54 9.23 2.34 14C101.28 81.88 79.8 97.73 57 98h-7C28.49 97.74 5.08 81.07 5.08 58c0-4.64 1.48-10.77 3.36-15 .98-2.2 2.5-4.38 4.31-7.56-2.5-6.75-8.81-14.69-5.44-23z";
+const cogSvgPath = "M15.5 19.12 38 6.25 44 22l14.62-.62 6.63-17.76 27 14-10.37 14L87.75 39l16.63-4 .5 30.88-15.38.74-3.88 11.88 8.76 12.88L72 105l-6.25-16.5-14.13.5-7.24 17.88-26-13.5L27.5 79.5l-5.38-8.38-16.39 4.43-1.28-31.28 15.91-.82s3.39-10.57 3.26-10.57c-.12 0-8.12-13.76-8.12-13.76z";
+
 const numRolls = 10;
 const rollSpeedMs = 140;
 
@@ -287,18 +290,21 @@ function initTooltips() {
 
 function initConfig() {
 	const volume = document.getElementById("volume-slider");
+	const selfTarget = document.getElementById("allow-self-target");
 	const rollAnim = document.getElementById("do-roll-animation");
 	const confetti = document.getElementById("do-confetti");
 	const movingBg = document.getElementById("do-moving-bg");
 
 	// Set input element states
 	volume.value = getOrDefault(localStorage.getItem("volume-slider"), 0.5);
+	selfTarget.checked = getOrDefault(localStorage.getItem("allow-self-target"), "false") === "true";
 	rollAnim.checked = getOrDefault(localStorage.getItem("do-roll-animation"), "true") === "true";
 	confetti.checked = getOrDefault(localStorage.getItem("do-confetti"), "true") === "true";
 	movingBg.checked = getOrDefault(localStorage.getItem("do-moving-bg"), "false") === "true";
 
 	// Add event listeners
 	volume.addEventListener("change", configChanged);
+	selfTarget.addEventListener("change", configChanged);
 	rollAnim.addEventListener("change", configChanged);
 	confetti.addEventListener("change", configChanged);
 	movingBg.addEventListener("change", configChanged);
@@ -357,32 +363,48 @@ function createTarget(type) {
 	arrow.role = "none";
 	target.appendChild(arrow);
 
-	const iconContainer = document.createElement("div");
+	const iconContainer = document.createElement((type == "toon") ? "button" : "div");
 	iconContainer.className = "target-icon-container";
-	{
-		const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		iconSvg.setAttribute("class", "target-icon");
-		iconSvg.setAttribute("viewBox", (type == "toon") ? "0 0 108 108" : "0 0 110 110");
-		iconSvg.ariaLabel = `${ordinalSuffix(targetNum)} ${type} from the right`;
-		iconSvg.role = "img";
 
-		const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		iconPath.setAttribute("d", (type == "toon")
-			? "M7.31 12.44c12.19-2.94 24.75 3.81 32.81 6 7.14-2.96 22.58-2.14 27.63-.13 7.56-2.06 20.75-8.31 32.63-6.37 3.48 4.45-2.5 18.94-5.13 24.06 2.81 3.81 3.69 5.63 4.66 8 1.8 4.43 2.54 9.23 2.34 14C101.28 81.88 79.8 97.73 57 98h-7C28.49 97.74 5.08 81.07 5.08 58c0-4.64 1.48-10.77 3.36-15 .98-2.2 2.5-4.38 4.31-7.56-2.5-6.75-8.81-14.69-5.44-23z"
-			: "M15.5 19.12 38 6.25 44 22l14.62-.62 6.63-17.76 27 14-10.37 14L87.75 39l16.63-4 .5 30.88-15.38.74-3.88 11.88 8.76 12.88L72 105l-6.25-16.5-14.13.5-7.24 17.88-26-13.5L27.5 79.5l-5.38-8.38-16.39 4.43-1.28-31.28 15.91-.82s3.39-10.57 3.26-10.57c-.12 0-8.12-13.76-8.12-13.76z"
-		);
+	if (type == "toon") {
+		iconContainer.dataset.tooltip = "Set as my Toon";
 
-		iconSvg.appendChild(iconPath);
-		iconContainer.appendChild(iconSvg);
+		iconContainer.addEventListener("click", (event) => {
+			const alreadySelected = event.target.parentElement.classList.contains("selected-toon");
 
-		const iconLabel = document.createElement("span");
-		iconLabel.className = "target-icon-label";
-		iconLabel.textContent = targetNum;
-		iconLabel.ariaHidden = true;
-		iconContainer.appendChild(iconLabel);
+			document.querySelectorAll("button.target-icon-container").forEach(e => e.parentElement.classList.remove("selected-toon"));
+
+			if (alreadySelected) {
+				event.target.parentElement.classList.remove("selected-toon");
+			} else {
+				event.target.parentElement.classList.add("selected-toon");
+			}
+		});
 	}
-	target.appendChild(iconContainer);
 
+	const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	iconSvg.setAttribute("class", "target-icon");
+	iconSvg.setAttribute("viewBox", (type == "toon") ? "0 0 108 108" : "0 0 110 110");
+	iconSvg.ariaLabel = `${ordinalSuffix(targetNum)} ${type} from the right`;
+	iconSvg.role = "img";
+
+	if (type == "toon") {
+		iconSvg.ariaLabel += ", set this toon as yours";
+	}
+
+	const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+	iconPath.setAttribute("d", (type == "toon") ? toonSvgPath : cogSvgPath);
+
+	iconSvg.appendChild(iconPath);
+	iconContainer.appendChild(iconSvg);
+
+	const iconLabel = document.createElement("span");
+	iconLabel.className = "target-icon-label";
+	iconLabel.textContent = targetNum;
+	iconLabel.ariaHidden = true;
+	iconContainer.appendChild(iconLabel);
+
+	target.appendChild(iconContainer);
 	targetContainer.prepend(target);
 }
 
@@ -525,10 +547,22 @@ function showRolledGag(roll, { isLastRoll, doConfetti, shouldScrollView = true }
 }
 
 function rollSequence(sequenceLength) {
-	const gagButtons = document.getElementById("gag-panel").querySelectorAll(".gag-button:not(.disabled):not(.hidden)");
+	const gagButtons = [...document.querySelectorAll("#gag-panel .gag-button:not(.disabled):not(.hidden)")];
 
-	const cogs = document.getElementById("cog-targets").querySelectorAll(".target");
-	const toons = document.getElementById("toon-targets").querySelectorAll(".target");
+	const cogs = document.querySelectorAll("#cog-targets .target");
+	const toons = (document.getElementById("allow-self-target").checked)
+		? document.querySelectorAll("#toon-targets .target")
+		: document.querySelectorAll("#toon-targets .target:not(.selected-toon)");
+
+	if (toons.length == 0) {
+		// If no toons are able to be targeted, remove all gags that target toons
+		for (let i = gagButtons.length - 1; i >= 0; i--) {
+			const trackData = gagData.tracks[inheritedAttribute(gagButtons[i], "data-track")];
+			if (trackData.targetType == "TOONS") {
+				gagButtons.splice(i, 1);
+			}
+		}
+	}
 
 	if (gagButtons.length == 0) {
 		return null;
