@@ -352,6 +352,7 @@ function createTarget(type) {
 	const targetContainer = document.getElementById(`${type}-targets`);
 
 	const targetNum = targetContainer.childElementCount + 1;
+	const isToon = type == "toon";
 
 	const target = document.createElement("div");
 	target.classList.add("target", `${type}-target`);
@@ -363,37 +364,24 @@ function createTarget(type) {
 	arrow.role = "none";
 	target.appendChild(arrow);
 
-	const iconContainer = document.createElement((type == "toon") ? "button" : "div");
+	const iconContainer = document.createElement(isToon ? "button" : "div");
 	iconContainer.className = "target-icon-container";
-
-	if (type == "toon") {
-		iconContainer.dataset.tooltip = "Set as my Toon";
-
-		iconContainer.addEventListener("click", (event) => {
-			const alreadySelected = event.target.parentElement.classList.contains("selected-toon");
-
-			document.querySelectorAll("button.target-icon-container").forEach(e => e.parentElement.classList.remove("selected-toon"));
-
-			if (alreadySelected) {
-				event.target.parentElement.classList.remove("selected-toon");
-			} else {
-				event.target.parentElement.classList.add("selected-toon");
-			}
-		});
-	}
 
 	const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	iconSvg.setAttribute("class", "target-icon");
-	iconSvg.setAttribute("viewBox", (type == "toon") ? "0 0 108 108" : "0 0 110 110");
+	iconSvg.setAttribute("viewBox", isToon ? "0 0 108 108" : "0 0 110 110");
 	iconSvg.ariaLabel = `${ordinalSuffix(targetNum)} ${type} from the right`;
 	iconSvg.role = "img";
 
-	if (type == "toon") {
+	const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+	iconPath.setAttribute("d", isToon ? toonSvgPath : cogSvgPath);
+
+	if (isToon) {
+		iconContainer.dataset.tooltip = "Set as my Toon";
+		iconContainer.addEventListener("click", clickToonTarget);
+
 		iconSvg.ariaLabel += ", set this toon as yours";
 	}
-
-	const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-	iconPath.setAttribute("d", (type == "toon") ? toonSvgPath : cogSvgPath);
 
 	iconSvg.appendChild(iconPath);
 	iconContainer.appendChild(iconSvg);
@@ -416,6 +404,22 @@ function removeTarget(type) {
 
 	if (targetContainer.childElementCount > 1) {
 		targetContainer.firstElementChild.remove();
+	}
+}
+
+/**
+ * @param {Event} event
+ */
+function clickToonTarget(event) {
+	const target = event.target.parentElement;
+	const alreadySelected = target.classList.contains("selected-toon");
+
+	document.querySelectorAll("button.target-icon-container").forEach(e => e.parentElement.classList.remove("selected-toon"));
+
+	if (alreadySelected) {
+		target.classList.remove("selected-toon");
+	} else {
+		target.classList.add("selected-toon");
 	}
 }
 
