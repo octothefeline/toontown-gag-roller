@@ -623,7 +623,7 @@ button.target-icon-container:active {
 	left: 0px;
 	right: 0;
 	bottom: 0;
-	padding: 25px;
+	padding: 16px;
 
 	/* flex */
 	display: none;
@@ -636,7 +636,7 @@ button.target-icon-container:active {
 
 .modal-content {
 	box-sizing: border-box;
-	width: 575px;
+	width: 700px;
 	max-height: 100%;
 	min-height: 250px;
 	margin: auto;
@@ -708,12 +708,12 @@ button.target-icon-container:active {
 }
 
 .about-header {
-	display: flex;
-	justify-content: space-between;
+	position: relative;
 }
 
 .about-title-container {
-	margin: 12px;
+	margin: 12px auto;
+	width: fit-content;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -733,15 +733,20 @@ button.target-icon-container:active {
 	--button-color: white;
 	--accent-color: dimgray;
 
-	touch-action: manipulation;
-	cursor: pointer;
-	padding: 5px;
-	line-height: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: fit-content;
+	height: fit-content;
+
 	border: none;
 	border-radius: 30%;
 	background-color: var(--button-color);
-	width: fit-content;
-	height: fit-content;
+	padding: 5px;
+	line-height: 0;
+
+	touch-action: manipulation;
+	cursor: pointer;
 }
 
 .about-close:hover {
@@ -786,14 +791,27 @@ button.target-icon-container:active {
 	gap: 8px;
 }
 
-.about-section {
+.about-box-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 12px;
+	row-gap: 12px;
+}
+
+@media (width < 600px) {
+	.about-box-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.about-box {
 	border-radius: 8px;
 	padding: 16px;
 	background: rgb(95%, 95%, 95%);
 	box-shadow: 0 0 10px rgba(0 0 0 / 15%) inset;
 }
 
-.about-section-header {
+.about-box-header {
 	font-family: var(--font-minnie);
 	font-size: 18px;
 }
