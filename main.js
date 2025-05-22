@@ -234,8 +234,6 @@ function DOMContentLoaded() {
 	initGagRoller();
 	initTooltips();
 	initAudio();
-
-	rollSingleGag({ doConfetti: false, shouldScrollView: false });
 }
 
 function initAboutModal() {
@@ -429,6 +427,9 @@ function clickToonTarget(event) {
 //#region Gag rolling
 
 function rollButton() {
+	document.getElementById("rolled-gag").style.visibility = "visible";
+	document.getElementById("rolled-gag-label").style.transform = null;
+
 	if (document.getElementById("do-roll-animation").checked) {
 		startRollAnimation();
 	} else {

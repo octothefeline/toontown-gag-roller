@@ -347,6 +347,7 @@ button.target-icon-container:active {
 
 	font-family: var(--font-impress);
 	font-size: 26px;
+	text-align: center;
 	-webkit-user-select: text;
 	user-select: text;
 }
