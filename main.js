@@ -390,6 +390,10 @@ function createTarget(type) {
 	iconLabel.ariaHidden = true;
 	iconContainer.appendChild(iconLabel);
 
+	if (isToon && targetNum == 1) {
+		target.classList.add("selected-toon");
+	}
+
 	target.appendChild(iconContainer);
 	targetContainer.prepend(target);
 }
@@ -401,7 +405,13 @@ function removeTarget(type) {
 	const targetContainer = document.getElementById(`${type}-targets`);
 
 	if (targetContainer.childElementCount > 1) {
-		targetContainer.firstElementChild.remove();
+		const toRemove = targetContainer.firstElementChild;
+
+		toRemove.remove();
+
+		if (type == "toon" && toRemove.classList.contains("selected-toon")) {
+			targetContainer.firstElementChild.classList.add("selected-toon");
+		}
 	}
 }
 
@@ -409,16 +419,8 @@ function removeTarget(type) {
  * @param {Event} event
  */
 function clickToonTarget(event) {
-	const target = event.target.parentElement;
-	const alreadySelected = target.classList.contains("selected-toon");
-
 	document.querySelectorAll("button.target-icon-container").forEach(e => e.parentElement.classList.remove("selected-toon"));
-
-	if (alreadySelected) {
-		target.classList.remove("selected-toon");
-	} else {
-		target.classList.add("selected-toon");
-	}
+	event.target.parentElement.classList.add("selected-toon");
 }
 
 // #endregion
