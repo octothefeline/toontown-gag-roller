@@ -636,10 +636,9 @@ button.target-icon-container:active {
 
 .modal-content {
 	box-sizing: border-box;
-	width: 700px;
+	width: 730px;
 	max-height: 100%;
 	min-height: 250px;
-	margin: auto;
 	padding: 16px;
 	border-radius: 16px;
 	box-shadow: rgba(0 0 0 / 30%) 4px 4px 16px;
@@ -800,7 +799,8 @@ button.target-icon-container:active {
 
 @media (width < 600px) {
 	.about-box-grid {
-		grid-template-columns: 1fr;
+		display: flex;
+		flex-direction: column-reverse;
 	}
 }
 
