@@ -51,6 +51,23 @@ body {
 	visibility: hidden;
 }
 
+.skip-link {
+	position: absolute;
+	top: -9999px;
+	z-index: 999;
+
+	background: white;
+	border: 2px solid blue;
+	border-radius: 6px;
+	padding: 2px;
+	text-decoration: none;
+}
+
+.skip-link:focus {
+	top: 0;
+	left: 0;
+}
+
 /* #region Moving background */
 
 body::before {
@@ -356,22 +373,12 @@ button.target-icon-container:active {
 
 /* #region Gag panel */
 
-/* .gag-panel-section-old {
-	background-color: rgba(255, 255, 255, 0.5);
-	border: 3px solid white;
-	border-radius: 12px;
-	padding: 24px;
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 16px;
-} */
-
 .gag-panel-section {
 	--gag-panel-padding: 16px;
 	--gag-panel-row-gap: 4px;
 	--gag-button-gap: 4px;
+
+	position: relative;
 
 	background-color: color-mix(in srgb, var(--background-color), white 77.5%);
 	border: 2px solid white;
@@ -471,17 +478,24 @@ button.target-icon-container:active {
 	background-color: firebrick;
 }
 
-.roll-button-top {
+#roll-button-top {
 	width: 300px;
 	height: 50px;
 	border-radius: 12px;
 }
 
-.roll-button-side {
+#roll-button-side {
 	width: 150px;
 	height: 150px;
 	border-radius: 48px;
 	margin: 16px;
+}
+
+#skip-to-top:focus {
+	top: unset;
+	left: unset;
+	bottom: 0;
+	right: 0;
 }
 
 /* Swap side and top roll buttons when screen is narrow enough */
@@ -494,7 +508,11 @@ button.target-icon-container:active {
 		display: block;
 	}
 
-	.roll-button-side {
+	#roll-button-side {
+		display: none;
+	}
+
+	#skip-to-roll-button {
 		display: none;
 	}
 }
