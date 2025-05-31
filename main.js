@@ -795,7 +795,11 @@ function gagPanelEventListener(event) {
  * @param {Element} button The gag button that was clicked.
  */
 function toggleGagButton(button) {
-	button.classList.toggle("disabled");
+	if (button.classList.toggle("disabled")) {
+		button.ariaLabel += ", disabled";
+	} else {
+		button.ariaLabel = button.ariaLabel.replace(", disabled", "");
+	}
 }
 
 /**
