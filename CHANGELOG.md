@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.1b] - 2025-08-29
+
+### Changes
+
+- Add font files to repository
+
 ## [v1.1] - 2025-05-31
 
 ### Features

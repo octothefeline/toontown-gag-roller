@@ -1,16 +1,16 @@
 @font-face {
 	font-family: Minnie;
-	src: url(https://commons.wiki.gg/images/a/a7/Minnie.ttf);
+	src: url(assets/font/Minnie.ttf);
 }
 
 @font-face {
 	font-family: Impress;
-	src: url(https://commons.wiki.gg/images/1/19/Impress.ttf);
+	src: url(assets/font/Impress.ttf);
 }
 
 @font-face {
 	font-family: Remington;
-	src: url(https://commons.wiki.gg/images/7/72/VtRemingtonPortable.ttf);
+	src: url(assets/font/VtRemingtonPortable.ttf);
 }
 
 :root {
